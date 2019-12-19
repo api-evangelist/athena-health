@@ -1,0 +1,61 @@
+{
+    "name": "Athena Health",
+    "description": "athenahealth is a leading provider of network-enabled services for electronic health records (EHR), revenue cycle management and medical billing, patient engagement, care coordination, and population health management, as well as Epocrates and other po...",
+    "image": "http:\/\/kinlane-productions.s3.amazonaws.com\/screen-capture-api\/28186-www-athenahealth-com.jpg",
+    "tags": [
+        "api provider",
+        "have api",
+        "healthcare"
+    ],
+    "created": "2019-12-19",
+    "modified": "2019-12-19",
+    "url": "https:\/\/raw.githubusercontent.com\/api-evangelist\/athena-health\/master\/apis.json",
+    "specificationVersion": "0.14",
+    "apis": [
+        {
+            "name": "Athena Health",
+            "description": null,
+            "image": "http:\/\/kinlane-productions.s3.amazonaws.com\/screen-capture-api\/28186-www-athenahealth-com.jpg",
+            "humanURL": "https:\/\/www.athenahealth.com",
+            "baseURL": "",
+            "tags": [],
+            "properties": [
+                {
+                    "type": "x-openapi",
+                    "url": "https:\/\/raw.githubusercontent.com\/api-evangelist\/1forge\/master\/athena-health-openapi.json"
+                },
+                {
+                    "type": "x-postman-collecction",
+                    "url": "https:\/\/raw.githubusercontent.com\/api-evangelist\/1forge\/master\/athena-health-postman-collection.json"
+                }
+            ]
+        }
+    ],
+    "include": [],
+    "x-common": [
+        {
+            "type": "Crunchbase",
+            "url": "https:\/\/crunchbase.com\/organization\/athenahealth"
+        },
+        {
+            "type": "Developers",
+            "url": "https:\/\/www.athenahealth.com\/developer-portal"
+        },
+        {
+            "type": "Email",
+            "url": "athenaGives@athenahealth.com"
+        },
+        {
+            "type": "Email",
+            "url": "athenainsight@athenahealth.com"
+        },
+        {
+            "type": "Twitter",
+            "url": "https:\/\/twitter.com\/athenahealth"
+        },
+        {
+            "type": "Website",
+            "url": "https:\/\/www.athenahealth.com"
+        }
+    ]
+}
