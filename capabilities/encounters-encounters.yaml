@@ -1,0 +1,15 @@
+name: athenahealth Encounters
+description: List a patient's encounters and read individual encounter details from athenaOne chart.
+api: athenahealth-athenaone-rest-api
+operations:
+- listPatientEncounters
+- getEncounter
+inputs:
+- name: practiceid
+  required: true
+- name: patientid
+  required: true
+outputs:
+- Encounter
+- EncounterList
+tags: [Encounters, Clinical, EHR]

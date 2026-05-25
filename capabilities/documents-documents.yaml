@@ -1,0 +1,14 @@
+name: athenahealth Documents
+description: List clinical documents on a patient chart in athenaOne.
+api: athenahealth-athenaone-rest-api
+operations:
+- listPatientDocuments
+inputs:
+- name: practiceid
+  required: true
+- name: patientid
+  required: true
+outputs:
+- Document
+- DocumentList
+tags: [Documents, Clinical, EHR]

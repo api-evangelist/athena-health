@@ -1,0 +1,11 @@
+name: athenahealth FHIR Encounter
+description: Read and search FHIR R4 Encounter resources from athenahealth.
+api: athenahealth-fhir-r4-api
+operations:
+- searchFhirEncounters
+- readFhirEncounter
+scopes:
+- patient/Encounter.read
+- user/Encounter.read
+- system/Encounter.read
+tags: [FHIR, USCDI, Encounter]

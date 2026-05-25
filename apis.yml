@@ -1,0 +1,255 @@
+aid: athena-health
+url: https://raw.githubusercontent.com/api-evangelist/athena-health/refs/heads/main/apis.yml
+apis:
+- aid: athena-health:athenahealth-athenaone-rest-api
+  name: athenahealth athenaOne REST API
+  tags:
+  - EHR
+  - Healthcare
+  - Practice Management
+  - Patients
+  - Appointments
+  - Encounters
+  - Claims
+  - Documents
+  - Providers
+  humanURL: https://docs.athenahealth.com/api/docs/athenaone-apis
+  baseURL: https://api.platform.athenahealth.com/v1/{practiceid}
+  properties:
+  - url: https://docs.athenahealth.com/api/docs/athenaone-apis
+    type: Documentation
+  - url: https://docs.athenahealth.com/api/api-ref/patient
+    type: Documentation
+  - url: https://docs.athenahealth.com/api/api-ref/appointment
+    type: Documentation
+  - url: https://docs.athenahealth.com/api/docs/encounter
+    type: Documentation
+  - url: openapi/athenahealth-athenaone-rest-api-openapi.yml
+    type: OpenAPI
+  - url: json-schema/athenahealth-patient-schema.json
+    type: JSONSchema
+  - url: json-schema/athenahealth-appointment-schema.json
+    type: JSONSchema
+  - url: json-ld/athena-health-context.jsonld
+    type: JSONLD
+  - type: NaftikoCapability
+    url: capabilities/patients-patients.yaml
+  - type: NaftikoCapability
+    url: capabilities/appointments-appointments.yaml
+  - type: NaftikoCapability
+    url: capabilities/encounters-encounters.yaml
+  - type: NaftikoCapability
+    url: capabilities/claims-claims.yaml
+  - type: NaftikoCapability
+    url: capabilities/documents-documents.yaml
+  - type: NaftikoCapability
+    url: capabilities/providers-providers.yaml
+  description: The athenaOne proprietary REST API exposes the complete provider, patient, and biller workflow surface
+    of athenahealth's cloud-based EHR and practice management platform. Resources include Patients, Appointments,
+    Encounters, Claims, Documents, Charts, Providers, Departments, Insurance, Orders, and Billing. Authenticated
+    via OAuth 2.0 client_credentials at the athenahealth Developer Portal; scoped per practice
+    via the practiceid path parameter.
+- aid: athena-health:athenahealth-fhir-r4-api
+  name: athenahealth FHIR R4 API
+  tags:
+  - EHR
+  - FHIR
+  - Healthcare
+  - HL7
+  - USCDI
+  - US Core
+  - Interoperability
+  humanURL: https://docs.athenahealth.com/api/docs/fhir-apis
+  baseURL: https://api.platform.athenahealth.com/fhir/r4
+  properties:
+  - url: https://docs.athenahealth.com/api/docs/fhir-apis
+    type: Documentation
+  - url: https://docs.athenahealth.com/api/guides/base-fhir-urls
+    type: Documentation
+  - url: https://mydata.athenahealth.com/fhirapidoc/r4
+    type: Documentation
+  - url: https://fhir.athena.io/athenacoreext/index.html
+    type: Documentation
+  - url: openapi/athenahealth-fhir-r4-api-openapi.yml
+    type: OpenAPI
+  - url: json-schema/athenahealth-fhir-patient-schema.json
+    type: JSONSchema
+  - type: NaftikoCapability
+    url: capabilities/fhir-patient.yaml
+  - type: NaftikoCapability
+    url: capabilities/fhir-encounter.yaml
+  - type: NaftikoCapability
+    url: capabilities/fhir-observation.yaml
+  - type: NaftikoCapability
+    url: capabilities/fhir-medication-request.yaml
+  description: The athenahealth FHIR R4 server is certified to the ONC Cures Act Final Rule and serves US Core and
+    USCDI profiles. Preview base URL https://api.preview.platform.athenahealth.com/fhir/r4 and production base URL
+    https://api.platform.athenahealth.com/fhir/r4. Supports Patient, Encounter, Observation, Condition,
+    MedicationRequest, AllergyIntolerance, DocumentReference, DiagnosticReport, CarePlan, Goal, Immunization, and
+    other US Core profiles. Authenticated via SMART on FHIR with the same OAuth 2.0 authorization server as the
+    proprietary athenaOne API.
+- aid: athena-health:athenahealth-fhir-subscriptions-api
+  name: athenahealth FHIR Subscriptions API
+  tags:
+  - EHR
+  - Events
+  - FHIR
+  - Healthcare
+  - Subscriptions
+  - Webhooks
+  humanURL: https://github.com/athenahealth/aone-fhir-subscriptions
+  baseURL: https://api.platform.athenahealth.com/fhir/r4
+  properties:
+  - url: https://github.com/athenahealth/aone-fhir-subscriptions
+    type: Documentation
+  - url: openapi/athenahealth-fhir-subscriptions-api-openapi.yml
+    type: OpenAPI
+  - url: asyncapi/athenahealth-fhir-subscriptions-asyncapi.yml
+    type: AsyncAPI
+  - type: NaftikoCapability
+    url: capabilities/fhir-subscriptions.yaml
+  description: The athenahealth Event Subscription Platform delivers near real-time healthcare-domain event
+    notifications via FHIR Subscriptions. Conforms to FHIR Subscriptions R5 Backport STU 1.0.0 implementation
+    guide. Currently supports the rest-hook channel and id-only payload type. Webhook endpoints must respond with
+    2xx within a 2 second timeout. Use this API to react to creates and updates on Patients, Appointments,
+    Encounters, Observations, Conditions, and other clinical resources without polling.
+- aid: athena-health:athenahealth-fhir-bulk-data-api
+  name: athenahealth FHIR Bulk Data Access API
+  tags:
+  - Bulk Data
+  - EHR
+  - FHIR
+  - Healthcare
+  - Interoperability
+  - USCDI
+  humanURL: https://docs.athenahealth.com/api/resources/227-release-added-fhir-bulk-data-access-capability-support-21st-century-cures
+  baseURL: https://api.platform.athenahealth.com/fhir/r4
+  properties:
+  - url: https://docs.athenahealth.com/api/resources/227-release-added-fhir-bulk-data-access-capability-support-21st-century-cures
+    type: Documentation
+  - url: https://docs.mydata.athenahealth.com/fhir-r4/ehiexport.html
+    type: Documentation
+  - url: openapi/athenahealth-fhir-bulk-data-api-openapi.yml
+    type: OpenAPI
+  - type: NaftikoCapability
+    url: capabilities/fhir-bulk-export.yaml
+  description: FHIR Bulk Data Access ($export) for athenahealth — Group-level export operation that returns
+    NDJSON files containing FHIR resources for all patients in a specified Group. Implements the FHIR Bulk Data
+    Access (Flat FHIR) Export Implementation Guide and the FHIR Asynchronous Request Pattern. Required for
+    21st Century Cures Act compliance and is used for population-health analytics and EHI export workflows.
+- aid: athena-health:athenahealth-cds-hooks-api
+  name: athenahealth CDS Hooks API
+  tags:
+  - CDS Hooks
+  - Clinical Decision Support
+  - EHR
+  - FHIR
+  - Healthcare
+  humanURL: https://docs.athenahealth.com/downloads/athenaone-cds-hooks-integration-guide
+  properties:
+  - url: https://docs.athenahealth.com/downloads/athenaone-cds-hooks-integration-guide
+    type: Documentation
+  - url: openapi/athenahealth-cds-hooks-api-openapi.yml
+    type: OpenAPI
+  - type: NaftikoCapability
+    url: capabilities/cds-hooks.yaml
+  description: CDS Hooks integration for athenaOne — invoke remote clinical decision support services at well-defined
+    points in the EHR workflow (patient-view, order-select, order-sign, appointment-book). Returns Cards
+    (suggestion, action, link) and optional SMART App Launch links to display real-time guidance inside the
+    athenaOne provider experience.
+name: athenahealth
+tags:
+- EHR
+- Electronic Health Records
+- Healthcare
+- HL7
+- FHIR
+- Interoperability
+- Practice Management
+- Revenue Cycle Management
+- USCDI
+- Cures Act
+- SMART on FHIR
+- CDS Hooks
+- Cloud EHR
+kind: contract
+image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+access: 3rd-Party
+common:
+- type: LinkedIn
+  url: https://www.linkedin.com/company/athenahealth
+- url: https://www.athenahealth.com/
+  name: athenahealth Homepage
+  type: Portal
+- url: https://docs.athenahealth.com/api/
+  name: APIs at athenahealth
+  type: Documentation
+- url: https://docs.athenahealth.com/api/guides/overview
+  name: Welcome to APIs at athenahealth
+  type: Documentation
+- url: https://mydata.athenahealth.com/access-the-apis
+  name: athenahealth Developer Portal
+  type: Portal
+- url: https://docs.athenahealth.com/api/sandbox
+  name: API Solutions Sandbox
+  type: Sandbox
+- url: https://docs.athenahealth.com/api/guides/athenaone-environments
+  name: athenaOne Environments
+  type: Documentation
+- url: https://docs.athenahealth.com/api/guides/base-fhir-urls
+  name: FHIR Base URLs
+  type: Documentation
+- url: https://docs.athenahealth.com/api/guides/onboarding-overview
+  name: Onboarding Overview
+  type: Documentation
+- url: https://docs.athenahealth.com/api/support
+  name: Support
+  type: Support
+- url: https://www.athenahealth.com/solutions/marketplace
+  name: athenahealth Marketplace
+  type: Marketplace
+- url: https://www.athenahealth.com/knowledge-hub
+  name: athenahealth Knowledge Hub
+  type: Blog
+- url: https://github.com/athenahealth
+  name: athenahealth GitHub
+  type: Source
+- url: https://fhir.athena.io/athenacoreext/index.html
+  name: Athena Core FHIR Implementation Guide
+  type: Documentation
+- url: https://mydata.athenahealth.com/fhirapidoc/r4
+  name: R4 API Documentation
+  type: Documentation
+- url: plans/athena-health-plans-pricing.yml
+  type: Plans
+- url: rate-limits/athena-health-rate-limits.yml
+  type: RateLimits
+- url: finops/athena-health-finops.yml
+  type: FinOps
+- url: vocabulary/athena-health-vocabulary.yml
+  type: Vocabulary
+- url: rules/athena-health-rules.yml
+  type: Spectral
+- url: https://github.com/athenahealth/mdp
+  name: MDP API Samples
+  type: Samples
+- url: https://github.com/athenahealth/apiserver-athenaFlex
+  name: athenaPractice/athenaFlow FHIR Sample
+  type: Samples
+- url: https://github.com/athenahealth/aone-fhir-subscriptions
+  name: athenaOne FHIR Subscriptions Sample
+  type: Samples
+- url: https://github.com/athenahealth/vscode-cql-extension
+  name: VSCode CQL Extension
+  type: Tools
+- url: https://github.com/eleanorhealth/go-athenahealth
+  name: Go athenahealth SDK (community)
+  type: SDK
+description: athenahealth is a cloud-based electronic health record (EHR), revenue cycle management, and practice
+  management platform serving ambulatory practices, hospitals, and health systems across the United States. The
+  athenaOne platform spans patient engagement, scheduling, clinical documentation, ordering, e-prescribing,
+  population health, and billing/claims. The athenahealth API surface exposes both a proprietary REST API and a
+  Cures Act-certified FHIR R4 server with US Core / USCDI conformance, FHIR Subscriptions for event-driven
+  webhooks, FHIR Bulk Data ($export) for population-scale data sharing, and CDS Hooks for embedded clinical
+  decision support. The company is privately held by Veritas Capital and Hellman & Friedman following the 2022
+  take-private acquisition.

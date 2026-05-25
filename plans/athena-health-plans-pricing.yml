@@ -1,0 +1,91 @@
+aid: athena-health
+specVersion: api-commons-plans-0.1
+name: athenahealth Plans and Pricing
+description: |
+  athenahealth does not publish list pricing for its athenaOne EHR / practice
+  management platform or for API access. Commercial terms are negotiated
+  per-practice and per-health-system via direct sales. API access is bundled
+  with athenaOne customer contracts; non-customer (partner) API access is
+  granted via the More Disruption Please (MDP) developer program and
+  athenahealth Marketplace partnerships.
+plans:
+- id: athenaone-customer
+  name: athenaOne Customer (negotiated)
+  audience: Provider organizations (practices, FQHCs, health systems)
+  description: |
+    athenaOne EHR + practice management + revenue cycle bundle. API access is
+    included for an organization's own data. Negotiated pricing — often a
+    percentage of collections for RCM customers — plus per-provider fees.
+  type: Custom
+  entries:
+  - geo: US
+    label: Pricing
+    price: Contact Sales
+    metric: practice
+    timeFrame: contract
+    description: Negotiated; commonly a percentage of collections plus per-provider fees.
+  elements:
+  - athenaOne EHR
+  - Practice Management
+  - Revenue Cycle Management (RCM)
+  - Patient Engagement (athenaCommunicator)
+  - Population Health (athenaIB)
+  - athenaOne Proprietary REST API access
+  - FHIR R4 API access
+  - FHIR Subscriptions
+  - FHIR Bulk Data Export
+  - CDS Hooks
+- id: mdp-developer
+  name: More Disruption Please (MDP) Developer Program
+  audience: Independent developers, ISVs, digital health startups
+  description: |
+    Sandbox access for development and certification. Production access
+    requires partnership terms and Marketplace listing. No published price —
+    revenue-share / partnership economics are negotiated case-by-case.
+  type: Partnership
+  entries:
+  - geo: US
+    label: Sandbox
+    price: Free
+    metric: developer
+    timeFrame: ongoing
+    description: Free preview/sandbox access via the athenahealth Developer Portal.
+  - geo: US
+    label: Production / Marketplace
+    price: Contact Partnerships
+    metric: partner
+    timeFrame: contract
+    description: Production credentials require executed partnership agreement.
+  elements:
+  - Preview/sandbox practice and tablespace
+  - athenaOne REST API access
+  - FHIR R4 API access
+  - FHIR Subscriptions
+  - FHIR Bulk Data
+  - CDS Hooks
+  - Marketplace listing (after certification)
+- id: cures-act-individual-access
+  name: Cures Act Individual / Third-Party App Access
+  audience: Patients and patient-authorized third-party apps
+  description: |
+    Information Blocking compliance under the 21st Century Cures Act. Patients
+    can use any SMART on FHIR app to access their own USCDI data at no cost.
+  type: Regulated
+  entries:
+  - geo: US
+    label: Patient access
+    price: Free
+    metric: patient
+    timeFrame: ongoing
+    description: Free Patient/USCDI data access via SMART on FHIR per Cures Act.
+  elements:
+  - SMART App Launch
+  - FHIR R4 Patient/USCDI read scopes
+  - Standardized API per ONC Final Rule
+references:
+- name: athenahealth Marketplace
+  url: https://www.athenahealth.com/solutions/marketplace
+- name: athenahealth Developer Portal
+  url: https://mydata.athenahealth.com/access-the-apis
+- name: Onboarding Overview
+  url: https://docs.athenahealth.com/api/guides/onboarding-overview

@@ -1,0 +1,10 @@
+name: athenahealth FHIR Observation
+description: Read and search FHIR R4 Observation resources (vitals, labs, social history) from athenahealth.
+api: athenahealth-fhir-r4-api
+operations:
+- searchFhirObservations
+scopes:
+- patient/Observation.read
+- user/Observation.read
+- system/Observation.read
+tags: [FHIR, USCDI, Observation, Labs, Vitals]

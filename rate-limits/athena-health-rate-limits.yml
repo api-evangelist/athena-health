@@ -1,0 +1,71 @@
+aid: athena-health
+specVersion: api-commons-rate-limits-0.1
+name: athenahealth Rate Limits
+description: |
+  Rate limit policies for athenahealth's API surface. athenahealth applies
+  per-application throttles. Specific quantitative limits are disclosed to
+  registered developers in the portal and may vary by environment, tablespace,
+  and product. The values below are typical for athenaOne integrations; refer
+  to the athenahealth Developer Portal for authoritative limits for your app.
+policies:
+- id: athenaone-rest-default
+  api: athenahealth-athenaone-rest-api
+  scope: per-application-per-tablespace
+  windowSeconds: 60
+  requestLimit: 600
+  description: |
+    The athenaOne proprietary REST API enforces per-application throttles
+    against each tablespace (production or preview). Typical default is in
+    the range of ~10 requests/sec sustained per app per tablespace; exact
+    limit is disclosed to the developer.
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  retryStrategy: exponential-backoff
+  errors:
+  - status: 429
+    code: too_many_requests
+- id: fhir-r4-default
+  api: athenahealth-fhir-r4-api
+  scope: per-application-per-tablespace
+  windowSeconds: 60
+  requestLimit: 600
+  description: |
+    The FHIR R4 endpoints share the same throttling tier as the proprietary
+    REST surface. SMART Backend Services tokens are scoped to system-level
+    reads and follow the same per-app quotas.
+  retryStrategy: exponential-backoff
+  errors:
+  - status: 429
+- id: fhir-subscriptions-delivery
+  api: athenahealth-fhir-subscriptions-api
+  scope: per-subscription
+  description: |
+    The athenahealth Event Subscription Platform delivers notifications via
+    rest-hook. Subscriber webhooks MUST acknowledge with a 2xx response
+    within a 2-second timeout. Delivery failures are retried with backoff;
+    persistent failures move the subscription into error status.
+  webhookTimeoutSeconds: 2
+  retryStrategy: backoff-with-error-status
+- id: bulk-data-export
+  api: athenahealth-fhir-bulk-data-api
+  scope: per-application
+  description: |
+    Bulk Data Access ($export) is asynchronous. Concurrent job limits are
+    enforced per application; clients SHOULD respect the Retry-After header
+    returned with 202 responses and SHOULD NOT poll status more frequently
+    than once per minute.
+  headers:
+  - Retry-After
+  retryStrategy: poll-with-retry-after
+- id: oauth-token
+  scope: per-application
+  description: |
+    OAuth 2.0 token endpoints are subject to anti-abuse throttling. Clients
+    SHOULD cache access tokens for their full TTL and avoid token churn.
+references:
+- name: APIs at athenahealth
+  url: https://docs.athenahealth.com/api/
+- name: athenahealth Support
+  url: https://docs.athenahealth.com/api/support

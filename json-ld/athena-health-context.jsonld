@@ -1,0 +1,40 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "fhir": "http://hl7.org/fhir/",
+    "uscore": "http://hl7.org/fhir/us/core/StructureDefinition/",
+    "athena": "https://raw.githubusercontent.com/api-evangelist/athena-health/main/json-ld/vocab#",
+    "Patient": "fhir:Patient",
+    "Encounter": "fhir:Encounter",
+    "Observation": "fhir:Observation",
+    "Condition": "fhir:Condition",
+    "MedicationRequest": "fhir:MedicationRequest",
+    "AllergyIntolerance": "fhir:AllergyIntolerance",
+    "Appointment": {
+      "@id": "fhir:Appointment",
+      "@type": "@id"
+    },
+    "Claim": "fhir:Claim",
+    "Provider": "schema:Person",
+    "Department": {
+      "@id": "schema:MedicalClinic",
+      "@type": "@id"
+    },
+    "Practice": "schema:MedicalOrganization",
+    "patientid": "athena:patientid",
+    "appointmentid": "athena:appointmentid",
+    "encounterid": "athena:encounterid",
+    "claimid": "athena:claimid",
+    "providerid": "athena:providerid",
+    "departmentid": "athena:departmentid",
+    "practiceid": "athena:practiceid",
+    "npi": "schema:identifier",
+    "firstname": "schema:givenName",
+    "lastname": "schema:familyName",
+    "dob": "schema:birthDate",
+    "email": "schema:email",
+    "homephone": "schema:telephone",
+    "mobilephone": "schema:telephone"
+  }
+}

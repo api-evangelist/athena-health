@@ -1,0 +1,10 @@
+name: athenahealth FHIR MedicationRequest
+description: Read and search FHIR R4 MedicationRequest resources from athenahealth.
+api: athenahealth-fhir-r4-api
+operations:
+- searchFhirMedicationRequests
+scopes:
+- patient/MedicationRequest.read
+- user/MedicationRequest.read
+- system/MedicationRequest.read
+tags: [FHIR, USCDI, MedicationRequest, ePrescribing]

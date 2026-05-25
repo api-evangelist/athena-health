@@ -1,0 +1,13 @@
+name: athenahealth FHIR Subscriptions
+description: Create, read, and delete FHIR Subscriptions to receive near real-time event notifications via rest-hook.
+api: athenahealth-fhir-subscriptions-api
+operations:
+- createSubscription
+- readSubscription
+- searchSubscriptions
+- deleteSubscription
+- getSubscriptionStatus
+scopes:
+- system/Subscription.read
+- system/Subscription.write
+tags: [FHIR, Subscriptions, Webhooks, Events]

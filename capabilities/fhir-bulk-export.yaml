@@ -1,0 +1,10 @@
+name: athenahealth FHIR Bulk Data Export
+description: Trigger and poll Group-level $export jobs and retrieve NDJSON output for population-scale data exchange.
+api: athenahealth-fhir-bulk-data-api
+operations:
+- groupBulkExport
+- getBulkExportStatus
+- cancelBulkExport
+scopes:
+- system/*.read
+tags: [FHIR, Bulk Data, Cures Act, Population Health]

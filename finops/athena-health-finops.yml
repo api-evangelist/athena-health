@@ -1,0 +1,66 @@
+aid: athena-health
+specVersion: focus-1.0
+name: athenahealth FinOps Surface
+description: |
+  FinOps surface for athenahealth API consumption. athenahealth does not
+  publish a public usage-metered billing surface for API access — commercial
+  terms are bundled with athenaOne customer contracts (often a percentage of
+  collections plus per-provider fees) or with MDP partnership agreements.
+  This document captures what is observable from outside the contract.
+billingModel:
+  primary: Bundled with athenaOne customer contract
+  secondary: MDP partnership / Marketplace revenue share
+  patientAccess: Free under 21st Century Cures Act
+cost:
+- serviceCategory: EHR / Practice Management
+  serviceName: athenaOne
+  chargeType: Contract
+  pricingModel: Negotiated (per-practice, per-provider, or % of collections)
+  pricingCurrency: USD
+  pricingUnit: practice/provider/contract
+  pricingFrequency: Monthly / Annual
+  description: athenaOne EHR + practice management + RCM bundled commercial contract.
+- serviceCategory: API Access
+  serviceName: athenaOne Proprietary REST API
+  chargeType: Included
+  pricingModel: Included in athenaOne contract
+  description: API access to one's own athenaOne data is included with customer contracts.
+- serviceCategory: API Access
+  serviceName: FHIR R4 API
+  chargeType: Included / Regulated
+  pricingModel: Free for Cures Act patient/third-party app access
+  description: |
+    Free standardized FHIR R4 access per the ONC Cures Act Final Rule for
+    patient and third-party app data access. Other usage is bundled in the
+    athenaOne contract.
+- serviceCategory: API Access
+  serviceName: FHIR Bulk Data Export
+  chargeType: Included
+  pricingModel: Included
+  description: Group-level $export operation available to authorized clients.
+- serviceCategory: Partner Access
+  serviceName: More Disruption Please Program
+  chargeType: Partnership
+  pricingModel: Negotiated partnership / revenue share
+  description: Sandbox is free; production requires partnership terms.
+focusAlignment:
+  BillingAccountName: athenahealth Inc.
+  ChargeCategory:
+  - Service charges
+  - Subscription
+  ChargeFrequency:
+  - Monthly
+  - Annual
+  - One-time
+  PricingCategory:
+  - Fixed
+  - Usage-based (rare; RCM % of collections)
+  CommitmentDiscountCategory:
+  - Multi-year contract
+references:
+- name: athenahealth Marketplace
+  url: https://www.athenahealth.com/solutions/marketplace
+- name: athenahealth Knowledge Hub
+  url: https://www.athenahealth.com/knowledge-hub
+- name: athenahealth Developer Portal
+  url: https://mydata.athenahealth.com/access-the-apis
