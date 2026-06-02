@@ -1,7 +1,0 @@
-name: athenahealth CDS Hooks
-description: Discover and invoke CDS Hooks services for patient-view, order-select, order-sign, and appointment-book hooks.
-api: athenahealth-cds-hooks-api
-operations:
-- discoverCdsServices
-- invokeCdsService
-tags: [CDS Hooks, Clinical Decision Support, FHIR]
