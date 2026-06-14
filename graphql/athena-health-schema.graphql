@@ -1,0 +1,1617 @@
+"""
+Athenahealth athenaOne GraphQL Schema
+Conceptual schema modelling the athenaOne REST API and FHIR R4 surface.
+Base REST API: https://api.platform.athenahealth.com/v1/{practiceid}
+FHIR R4 API:  https://api.platform.athenahealth.com/fhir/r4
+Auth: OAuth 2.0 client_credentials (SMART on FHIR for FHIR endpoints)
+"""
+
+# ---------------------------------------------------------------------------
+# Scalars
+# ---------------------------------------------------------------------------
+
+scalar Date
+scalar DateTime
+scalar JSON
+
+# ---------------------------------------------------------------------------
+# Enums
+# ---------------------------------------------------------------------------
+
+enum AppointmentStatus {
+  OPEN
+  BOOKED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  RESCHEDULED
+  NO_SHOW
+  FUTURE
+  CHARGE_ENTERED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  UNKNOWN
+}
+
+enum DocumentStatus {
+  OPEN
+  CLOSED
+  DELETED
+  ERROR
+}
+
+enum LabResultStatus {
+  FINAL
+  PRELIMINARY
+  CORRECTED
+  CANCELLED
+  PENDING
+}
+
+enum MessageStatus {
+  OPEN
+  CLOSED
+  DRAFT
+  SENT
+}
+
+enum ClaimStatus {
+  OPEN
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  PAID
+  DENIED
+  VOIDED
+  CLOSED
+}
+
+enum ChargeStatus {
+  OPEN
+  POSTED
+  VOID
+  MOVED
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  CREDIT_CARD
+  ELECTRONIC
+  OTHER
+}
+
+enum FHIRResourceType {
+  PATIENT
+  ENCOUNTER
+  OBSERVATION
+  CONDITION
+  MEDICATION_REQUEST
+  ALLERGY_INTOLERANCE
+  DOCUMENT_REFERENCE
+  DIAGNOSTIC_REPORT
+  CARE_PLAN
+  GOAL
+  IMMUNIZATION
+  PROCEDURE
+}
+
+enum WebhookStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+}
+
+# ---------------------------------------------------------------------------
+# Interfaces
+# ---------------------------------------------------------------------------
+
+interface Node {
+  id: ID!
+}
+
+interface Auditable {
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+# ---------------------------------------------------------------------------
+# Practice & Provider
+# ---------------------------------------------------------------------------
+
+type Practice implements Node & Auditable {
+  id: ID!
+  practiceId: String!
+  name: String!
+  displayName: String
+  npi: String
+  taxId: String
+  phone: String
+  fax: String
+  address: Address
+  timeZone: String
+  active: Boolean
+  providers: [Provider!]
+  departments: [Department!]
+  schedules: [Schedule!]
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: PracticeDetails
+}
+
+type PracticeDetails implements Node {
+  id: ID!
+  practiceId: String!
+  acceptingNewPatients: Boolean
+  groupNpi: String
+  taxonomyCode: String
+  specialties: [String!]
+  emrSystem: String
+  ehrCertificationNumber: String
+  curesActCompliant: Boolean
+  fhirBaseUrl: String
+  customFields: JSON
+}
+
+type Department implements Node {
+  id: ID!
+  departmentId: String!
+  practiceId: String!
+  name: String!
+  phone: String
+  fax: String
+  address: Address
+  placeOfService: String
+  active: Boolean
+}
+
+type Provider implements Node & Auditable {
+  id: ID!
+  providerId: String!
+  practiceId: String!
+  firstName: String!
+  lastName: String!
+  displayName: String
+  npi: String
+  specialty: String
+  credentials: String
+  active: Boolean
+  acceptingNewPatients: Boolean
+  departments: [Department!]
+  schedules: [Schedule!]
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: ProviderDetails
+}
+
+type ProviderDetails implements Node {
+  id: ID!
+  providerId: String!
+  taxonomyCode: String
+  stateLicenses: [StateLicense!]
+  deaNumber: String
+  medicareId: String
+  medicaidId: String
+  boardCertifications: [String!]
+  supervisionRequired: Boolean
+  supervisingProviderId: String
+  customFields: JSON
+}
+
+type StateLicense {
+  state: String!
+  licenseNumber: String!
+  expirationDate: Date
+}
+
+# ---------------------------------------------------------------------------
+# Patient
+# ---------------------------------------------------------------------------
+
+type Patient implements Node & Auditable {
+  id: ID!
+  patientId: String!
+  practiceId: String!
+  enterpriseId: String
+  firstName: String!
+  lastName: String!
+  middleName: String
+  dateOfBirth: Date
+  gender: Gender
+  email: String
+  phone: String
+  mobilePhone: String
+  address: Address
+  active: Boolean
+  demographics: PatientDemographics
+  insurance: [PatientInsurance!]
+  providers: [PatientProvider!]
+  appointments: [Appointment!]
+  encounters: [Encounter!]
+  problems: [Problem!]
+  allergies: [Allergy!]
+  prescriptions: [Prescription!]
+  documents: [Document!]
+  labs: [LabOrder!]
+  vitals: [VitalSet!]
+  messages: [PatientMessage!]
+  healthSummary: HealthSummary
+  portalAccount: Portal
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: PatientDetails
+}
+
+type PatientDetails implements Node {
+  id: ID!
+  patientId: String!
+  ssn: String
+  maritalStatus: String
+  race: String
+  ethnicity: String
+  preferredLanguage: String
+  occupation: String
+  employerName: String
+  emergencyContact: EmergencyContact
+  guarantor: Guarantor
+  consentToText: Boolean
+  consentToEmail: Boolean
+  portalEnabled: Boolean
+  chartSharingEnabled: Boolean
+  customFields: JSON
+}
+
+type PatientDemographics implements Node {
+  id: ID!
+  patientId: String!
+  race: String
+  ethnicity: String
+  preferredLanguage: String
+  sexualOrientation: String
+  genderIdentity: String
+  maritalStatus: String
+  religion: String
+  mothersMaidenName: String
+  dateOfDeath: Date
+  causeOfDeath: String
+}
+
+type PatientInsurance implements Node & Auditable {
+  id: ID!
+  patientId: String!
+  insuranceId: String!
+  sequenceNumber: Int
+  insuranceType: String
+  payer: InsurancePayer
+  plan: InsurancePlan
+  memberId: String
+  groupNumber: String
+  groupName: String
+  policyHolderName: String
+  policyHolderRelationship: String
+  policyHolderDateOfBirth: Date
+  effectiveDate: Date
+  expirationDate: Date
+  eligibilityStatus: String
+  eligibilityLastChecked: DateTime
+  copay: Float
+  deductible: Float
+  deductibleMet: Float
+  outOfPocketMax: Float
+  outOfPocketMet: Float
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+type PatientProvider implements Node {
+  id: ID!
+  patientId: String!
+  provider: Provider!
+  providerType: String
+  isPrimary: Boolean
+  assignedDate: Date
+  departmentId: String
+}
+
+type EmergencyContact {
+  name: String
+  relationship: String
+  phone: String
+  mobilePhone: String
+}
+
+type Guarantor {
+  firstName: String
+  lastName: String
+  dateOfBirth: Date
+  relationship: String
+  address: Address
+  phone: String
+  email: String
+  ssn: String
+}
+
+# ---------------------------------------------------------------------------
+# Appointment
+# ---------------------------------------------------------------------------
+
+type Appointment implements Node & Auditable {
+  id: ID!
+  appointmentId: String!
+  practiceId: String!
+  patient: Patient
+  provider: Provider!
+  department: Department!
+  appointmentType: AppointmentType!
+  status: AppointmentStatus!
+  scheduledDateTime: DateTime!
+  duration: Int
+  checkInTime: DateTime
+  checkOutTime: DateTime
+  notes: [AppointmentNotes!]
+  referralId: String
+  supervisingProviderId: String
+  frozenFlag: Boolean
+  patientNote: String
+  urgency: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: AppointmentDetails
+}
+
+type AppointmentDetails implements Node {
+  id: ID!
+  appointmentId: String!
+  reasonForVisit: String
+  chiefComplaint: String
+  referringProvider: String
+  referringProviderId: String
+  authorizationNumber: String
+  copay: Float
+  copayCollected: Float
+  insuranceId: String
+  customFields: JSON
+}
+
+type AppointmentType implements Node {
+  id: ID!
+  appointmentTypeId: String!
+  name: String!
+  shortName: String
+  duration: Int
+  templateTypeOnly: Boolean
+  patientFacing: Boolean
+  shortDescription: String
+  longDescription: String
+}
+
+type AppointmentNotes {
+  noteId: String
+  noteText: String!
+  displayOnSchedule: Boolean
+  createdAt: DateTime
+  createdBy: String
+}
+
+type OpenAppointmentSlot implements Node {
+  id: ID!
+  practiceId: String!
+  departmentId: String!
+  provider: Provider!
+  appointmentType: AppointmentType!
+  startDateTime: DateTime!
+  duration: Int!
+  frozenFlag: Boolean
+  reasonNotAvailable: String
+}
+
+# ---------------------------------------------------------------------------
+# Encounter
+# ---------------------------------------------------------------------------
+
+type Encounter implements Node & Auditable {
+  id: ID!
+  encounterId: String!
+  practiceId: String!
+  patient: Patient!
+  provider: Provider!
+  department: Department!
+  appointment: Appointment
+  encounterDate: Date!
+  encounterType: String
+  status: String
+  diagnoses: [Diagnosis!]
+  prescriptions: [Prescription!]
+  vitals: VitalSet
+  labs: [LabOrder!]
+  documents: [Document!]
+  chart: Chart
+  clinicalSummary: ClinicalSummary
+  ccda: CCDA
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: EncounterDetails
+}
+
+type EncounterDetails implements Node {
+  id: ID!
+  encounterId: String!
+  chiefComplaint: String
+  hpi: String
+  ros: String
+  physicalExam: String
+  assessment: String
+  plan: String
+  visitSummary: String
+  dischargeInstructions: String
+  followUpInstructions: String
+  closedDateTime: DateTime
+  closedBy: String
+  customFields: JSON
+}
+
+# ---------------------------------------------------------------------------
+# Clinical — Diagnosis, Problem, Allergy
+# ---------------------------------------------------------------------------
+
+type Diagnosis implements Node {
+  id: ID!
+  diagnosisId: String!
+  encounterId: String!
+  patientId: String!
+  icdCode: String!
+  icdCodeSet: String
+  description: String!
+  primary: Boolean
+  sequenceNumber: Int
+  diagnosisDate: Date
+  resolvedDate: Date
+  snomedCode: String
+  presentOnAdmission: Boolean
+}
+
+type Problem implements Node & Auditable {
+  id: ID!
+  problemId: String!
+  patientId: String!
+  icdCode: String
+  snomedCode: String
+  description: String!
+  status: String
+  onsetDate: Date
+  resolvedDate: Date
+  codedDescription: String
+  lastModifiedDate: DateTime
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+type Allergy implements Node & Auditable {
+  id: ID!
+  allergyId: String!
+  patientId: String!
+  allergenName: String!
+  allergenType: String
+  reactions: [String!]
+  severity: String
+  onsetDate: Date
+  deactivatedDate: Date
+  snomedCode: String
+  rxnormCode: String
+  note: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+# ---------------------------------------------------------------------------
+# Medications & Prescriptions
+# ---------------------------------------------------------------------------
+
+type Prescription implements Node & Auditable {
+  id: ID!
+  prescriptionId: String!
+  patientId: String!
+  encounterId: String
+  provider: Provider!
+  medicationName: String!
+  rxnormCode: String
+  ndcCode: String
+  sig: String
+  quantity: String
+  refills: Int
+  daysSupply: Int
+  pharmacy: PharmacyDetails
+  prescribedDate: Date
+  fillDate: Date
+  status: String
+  controlled: Boolean
+  generic: Boolean
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  order: MedicationOrder
+}
+
+type MedicationOrder implements Node {
+  id: ID!
+  orderId: String!
+  patientId: String!
+  encounterId: String
+  provider: Provider!
+  medicationName: String!
+  rxnormCode: String
+  orderType: String
+  status: String
+  orderedDate: Date
+  expirationDate: Date
+  dispenseAsWritten: Boolean
+  clinicalOrderType: String
+  diagnosis: [Diagnosis!]
+}
+
+type PharmacyDetails implements Node {
+  id: ID!
+  pharmacyId: String!
+  name: String!
+  ncpdpId: String
+  npi: String
+  phone: String
+  fax: String
+  address: Address
+  type: String
+  active: Boolean
+  preferred: Boolean
+}
+
+# ---------------------------------------------------------------------------
+# Vitals
+# ---------------------------------------------------------------------------
+
+type VitalSet implements Node & Auditable {
+  id: ID!
+  vitalSetId: String!
+  patientId: String!
+  encounterId: String
+  recordedDateTime: DateTime!
+  recordedBy: String
+  vitals: [VitalDetails!]!
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+type VitalDetails {
+  vitalType: String!
+  value: String!
+  unit: String
+  interpretation: String
+  source: String
+  clinicallyRelevant: Boolean
+}
+
+# ---------------------------------------------------------------------------
+# Lab Orders & Results
+# ---------------------------------------------------------------------------
+
+type LabOrder implements Node & Auditable {
+  id: ID!
+  labOrderId: String!
+  patientId: String!
+  encounterId: String
+  provider: Provider!
+  orderingProvider: Provider
+  loincCode: String
+  description: String!
+  status: String!
+  orderedDate: Date
+  collectionDate: Date
+  resultDate: Date
+  priority: String
+  diagnoses: [Diagnosis!]
+  results: [LabResult!]
+  documents: [Document!]
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  lab: Lab
+}
+
+type Lab implements Node {
+  id: ID!
+  labId: String!
+  name: String!
+  npi: String
+  address: Address
+  phone: String
+  fax: String
+  active: Boolean
+}
+
+type LabResult implements Node & Auditable {
+  id: ID!
+  resultId: String!
+  labOrderId: String!
+  patientId: String!
+  status: LabResultStatus!
+  resultDateTime: DateTime
+  loincCode: String
+  description: String
+  analytes: [LabAnalyte!]
+  observations: [LabObservation!]
+  note: String
+  reviewedDateTime: DateTime
+  reviewedBy: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+type LabAnalyte {
+  analyteId: String
+  name: String!
+  value: String
+  unit: String
+  referenceRange: String
+  loincCode: String
+  abnormalFlag: String
+  status: String
+}
+
+type LabObservation {
+  observationId: String
+  loincCode: String
+  description: String
+  value: String
+  unit: String
+  referenceRange: String
+  interpretationCode: String
+  status: String
+  effectiveDateTime: DateTime
+}
+
+# ---------------------------------------------------------------------------
+# Documents & Charts
+# ---------------------------------------------------------------------------
+
+type Document implements Node & Auditable {
+  id: ID!
+  documentId: String!
+  patientId: String!
+  practiceId: String!
+  documentType: DocumentType!
+  status: DocumentStatus!
+  description: String
+  createdDate: Date
+  lastModifiedDate: DateTime
+  provider: Provider
+  department: Department
+  encounterId: String
+  priority: String
+  assignedTo: String
+  url: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: DocumentDetails
+}
+
+type DocumentDetails implements Node {
+  id: ID!
+  documentId: String!
+  subject: String
+  note: String
+  actionNote: String
+  internalNote: String
+  externalNote: String
+  pages: Int
+  size: Int
+  mimeType: String
+  attachmentType: String
+  source: String
+  attachedEncounterId: String
+  customFields: JSON
+}
+
+type DocumentType implements Node {
+  id: ID!
+  documentTypeId: String!
+  name: String!
+  category: String
+  patientFacing: Boolean
+  active: Boolean
+  description: String
+}
+
+type Chart implements Node & Auditable {
+  id: ID!
+  chartId: String!
+  patientId: String!
+  encounters: [Encounter!]
+  problems: [Problem!]
+  allergies: [Allergy!]
+  medications: [Prescription!]
+  vitals: [VitalSet!]
+  labs: [LabOrder!]
+  immunizations: [Immunization!]
+  documents: [Document!]
+  socialHistory: JSON
+  familyHistory: JSON
+  surgicalHistory: JSON
+  reviewOfSystems: JSON
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: ChartDetails
+}
+
+type ChartDetails implements Node {
+  id: ID!
+  chartId: String!
+  lastVisitDate: Date
+  primaryDiagnoses: [Diagnosis!]
+  activeMedications: [Prescription!]
+  activeProblems: [Problem!]
+  lastLabResultDate: Date
+  lastVitalsDate: Date
+  riskScore: Float
+  careGapCount: Int
+}
+
+type Immunization implements Node & Auditable {
+  id: ID!
+  immunizationId: String!
+  patientId: String!
+  vaccineName: String!
+  cvxCode: String
+  mvxCode: String
+  administeredDate: Date
+  expirationDate: Date
+  lotNumber: String
+  manufacturer: String
+  site: String
+  route: String
+  dose: String
+  administered: Boolean
+  refused: Boolean
+  refusalReason: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+# ---------------------------------------------------------------------------
+# Clinical Summaries & CCDA / FHIR
+# ---------------------------------------------------------------------------
+
+type HealthSummary implements Node {
+  id: ID!
+  patientId: String!
+  generatedAt: DateTime
+  activeProblems: [Problem!]
+  activeMedications: [Prescription!]
+  allergies: [Allergy!]
+  recentVitals: VitalSet
+  recentLabs: [LabResult!]
+  immunizations: [Immunization!]
+  carePlans: [JSON]
+  goals: [JSON]
+  careTeam: [PatientProvider!]
+}
+
+type ClinicalSummary implements Node {
+  id: ID!
+  encounterId: String!
+  patientId: String!
+  generatedAt: DateTime
+  visitDate: Date
+  diagnoses: [Diagnosis!]
+  medications: [Prescription!]
+  vitals: VitalSet
+  labOrders: [LabOrder!]
+  followUpInstructions: String
+  patientInstructions: String
+  pdf: String
+  html: String
+}
+
+type CCDA implements Node {
+  id: ID!
+  ccdaId: String!
+  patientId: String!
+  encounterId: String
+  version: String
+  generatedAt: DateTime
+  documentType: String
+  xml: String
+  sections: [String!]
+  author: String
+  custodian: String
+}
+
+type FHIR implements Node {
+  id: ID!
+  patientId: String!
+  resourceType: FHIRResourceType!
+  resourceId: String!
+  version: String
+  lastUpdated: DateTime
+  profile: [String!]
+  json: JSON
+  baseUrl: String
+  meta: JSON
+}
+
+# ---------------------------------------------------------------------------
+# Scheduling
+# ---------------------------------------------------------------------------
+
+type Schedule implements Node & Auditable {
+  id: ID!
+  scheduleId: String!
+  practiceId: String!
+  provider: Provider!
+  department: Department!
+  name: String
+  startDate: Date
+  endDate: Date
+  active: Boolean
+  availabilitySlots: [OpenAppointmentSlot!]
+  appointmentTypes: [AppointmentType!]
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+type Availability {
+  provider: Provider!
+  department: Department!
+  date: Date!
+  openSlots: [OpenAppointmentSlot!]!
+  totalSlots: Int
+  bookedSlots: Int
+  frozenSlots: Int
+}
+
+# ---------------------------------------------------------------------------
+# Insurance & Billing
+# ---------------------------------------------------------------------------
+
+type InsurancePayer implements Node {
+  id: ID!
+  payerId: String!
+  name: String!
+  npi: String
+  payerType: String
+  electronicPayerId: String
+  claimOfficePhone: String
+  claimAddress: Address
+  active: Boolean
+  plans: [InsurancePlan!]
+}
+
+type InsurancePlan implements Node {
+  id: ID!
+  planId: String!
+  payerId: String!
+  name: String!
+  planType: String
+  groupNumber: String
+  active: Boolean
+  effectiveDate: Date
+  terminationDate: Date
+  networkType: String
+  formularyId: String
+}
+
+type Claim implements Node & Auditable {
+  id: ID!
+  claimId: String!
+  patientId: String!
+  practiceId: String!
+  encounterId: String
+  appointmentId: String
+  provider: Provider!
+  payer: InsurancePayer
+  plan: InsurancePlan
+  status: ClaimStatus!
+  serviceDate: Date
+  submitDate: Date
+  totalBilled: Float
+  totalAllowed: Float
+  totalPaid: Float
+  totalAdjusted: Float
+  patientBalance: Float
+  insuranceBalance: Float
+  charges: [Charge!]
+  payments: [Payment!]
+  diagnoses: [Diagnosis!]
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: ClaimDetails
+}
+
+type ClaimDetails implements Node {
+  id: ID!
+  claimId: String!
+  renderingProviderId: String
+  billingProviderId: String
+  referringProviderId: String
+  facilityId: String
+  placeOfService: String
+  billType: String
+  admissionDate: Date
+  dischargeDate: Date
+  priorAuthorizationNumber: String
+  referralId: String
+  claimType: String
+  billNote: String
+  customFields: JSON
+}
+
+type Charge implements Node & Auditable {
+  id: ID!
+  chargeId: String!
+  claimId: String!
+  patientId: String!
+  status: ChargeStatus!
+  procedureCode: String!
+  procedureDescription: String
+  modifiers: [String!]
+  diagnosisCodes: [String!]
+  units: Int
+  chargeAmount: Float
+  allowedAmount: Float
+  serviceDate: Date
+  postedDate: Date
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: ChargeDetail
+}
+
+type ChargeDetail implements Node {
+  id: ID!
+  chargeId: String!
+  revenueCode: String
+  ndcCode: String
+  ndcQuantity: Float
+  ndcUnit: String
+  toothNumber: String
+  toothSurface: String
+  dentalQuadrant: String
+  classificationCode: String
+  supervisingProviderId: String
+}
+
+type Payment implements Node & Auditable {
+  id: ID!
+  paymentId: String!
+  claimId: String
+  patientId: String!
+  practiceId: String!
+  amount: Float!
+  paymentMethod: PaymentMethod!
+  paymentDate: Date!
+  depositDate: Date
+  checkNumber: String
+  referenceNumber: String
+  batchId: String
+  payerName: String
+  postedBy: String
+  voidDate: Date
+  voidReason: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: PaymentDetails
+}
+
+type PaymentDetails implements Node {
+  id: ID!
+  paymentId: String!
+  eobReference: String
+  adjustmentReasonCode: String
+  adjustmentAmount: Float
+  claimAdjustmentGroup: String
+  contractedRate: Float
+  writeOffAmount: Float
+  writeOffReason: String
+  patientResponsibilityCode: String
+}
+
+type EOB implements Node {
+  id: ID!
+  eobId: String!
+  claimId: String!
+  payerId: String!
+  payerName: String!
+  receivedDate: Date!
+  totalBilled: Float
+  totalAllowed: Float
+  totalPaid: Float
+  totalAdjusted: Float
+  totalPatientResponsibility: Float
+  claimStatus: String
+  checkNumber: String
+  checkDate: Date
+  lines: [EOBLine!]
+}
+
+type EOBLine {
+  serviceDate: Date!
+  procedureCode: String!
+  billedAmount: Float
+  allowedAmount: Float
+  paidAmount: Float
+  adjustedAmount: Float
+  patientResponsibility: Float
+  adjustmentReasonCode: String
+  claimAdjustmentGroup: String
+  remarkCode: String
+}
+
+# ---------------------------------------------------------------------------
+# Messaging & Portal
+# ---------------------------------------------------------------------------
+
+type Message implements Node & Auditable {
+  id: ID!
+  messageId: String!
+  practiceId: String!
+  patientId: String
+  subject: String!
+  body: String!
+  status: MessageStatus!
+  sentAt: DateTime
+  readAt: DateTime
+  senderType: String
+  senderId: String
+  recipientType: String
+  recipientId: String
+  priority: String
+  attachments: [Document!]
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: MessageDetails
+}
+
+type PatientMessage implements Node & Auditable {
+  id: ID!
+  messageId: String!
+  patientId: String!
+  practiceId: String!
+  subject: String!
+  body: String!
+  status: MessageStatus!
+  direction: String
+  sentAt: DateTime
+  readAt: DateTime
+  provider: Provider
+  department: Department
+  attachments: [Document!]
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+type MessageDetails implements Node {
+  id: ID!
+  messageId: String!
+  threadId: String
+  inReplyTo: String
+  referenceId: String
+  category: String
+  tags: [String!]
+  customFields: JSON
+}
+
+type Portal implements Node & Auditable {
+  id: ID!
+  portalId: String!
+  patientId: String!
+  practiceId: String!
+  username: String
+  email: String
+  active: Boolean
+  lastLoginAt: DateTime
+  registeredAt: DateTime
+  termsAcceptedAt: DateTime
+  messages: [PatientMessage!]
+  appointments: [Appointment!]
+  healthSummary: HealthSummary
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+  details: PortalDetails
+}
+
+type PortalDetails implements Node {
+  id: ID!
+  portalId: String!
+  patientId: String!
+  canSchedule: Boolean
+  canRequestRx: Boolean
+  canRequestReferral: Boolean
+  canViewLabResults: Boolean
+  canViewMedications: Boolean
+  canPayBills: Boolean
+  canDownloadRecords: Boolean
+  twoFactorEnabled: Boolean
+  preferredNotificationMethod: String
+  notificationEmail: String
+  notificationPhone: String
+}
+
+# ---------------------------------------------------------------------------
+# Auth & Webhooks
+# ---------------------------------------------------------------------------
+
+type APIKey implements Node {
+  id: ID!
+  keyId: String!
+  practiceId: String
+  name: String!
+  clientId: String!
+  scopes: [String!]
+  createdAt: DateTime
+  expiresAt: DateTime
+  lastUsedAt: DateTime
+  active: Boolean
+  environment: String
+}
+
+type Token implements Node {
+  id: ID!
+  tokenId: String!
+  accessToken: String!
+  tokenType: String!
+  expiresIn: Int!
+  scope: String
+  issuedAt: DateTime!
+  expiresAt: DateTime!
+  practiceId: String
+  userId: String
+  smartLaunchContext: JSON
+}
+
+type Webhook implements Node & Auditable {
+  id: ID!
+  webhookId: String!
+  practiceId: String!
+  name: String
+  targetUrl: String!
+  status: WebhookStatus!
+  events: [String!]!
+  secret: String
+  headers: JSON
+  lastDeliveryAt: DateTime
+  lastDeliveryStatus: Int
+  failureCount: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: String
+  updatedBy: String
+}
+
+# ---------------------------------------------------------------------------
+# Common
+# ---------------------------------------------------------------------------
+
+type Address {
+  line1: String
+  line2: String
+  city: String
+  state: String
+  zip: String
+  country: String
+}
+
+# ---------------------------------------------------------------------------
+# Pagination
+# ---------------------------------------------------------------------------
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+  totalCount: Int
+}
+
+type PatientConnection {
+  edges: [PatientEdge!]
+  pageInfo: PageInfo!
+}
+
+type PatientEdge {
+  node: Patient!
+  cursor: String!
+}
+
+type AppointmentConnection {
+  edges: [AppointmentEdge!]
+  pageInfo: PageInfo!
+}
+
+type AppointmentEdge {
+  node: Appointment!
+  cursor: String!
+}
+
+type EncounterConnection {
+  edges: [EncounterEdge!]
+  pageInfo: PageInfo!
+}
+
+type EncounterEdge {
+  node: Encounter!
+  cursor: String!
+}
+
+type ClaimConnection {
+  edges: [ClaimEdge!]
+  pageInfo: PageInfo!
+}
+
+type ClaimEdge {
+  node: Claim!
+  cursor: String!
+}
+
+# ---------------------------------------------------------------------------
+# Root Operations
+# ---------------------------------------------------------------------------
+
+type Query {
+  # Practices
+  practice(practiceId: String!): Practice
+  practices(first: Int, after: String): [Practice!]
+
+  # Providers
+  provider(practiceId: String!, providerId: String!): Provider
+  providers(practiceId: String!, departmentId: String, first: Int, after: String): [Provider!]
+
+  # Patients
+  patient(practiceId: String!, patientId: String!): Patient
+  patients(practiceId: String!, search: String, first: Int, after: String): PatientConnection
+  patientByMrn(practiceId: String!, mrn: String!): Patient
+  patientByDemographics(practiceId: String!, firstName: String!, lastName: String!, dateOfBirth: Date!): [Patient!]
+
+  # Appointments
+  appointment(practiceId: String!, appointmentId: String!): Appointment
+  appointments(practiceId: String!, patientId: String, providerId: String, startDate: Date, endDate: Date, status: AppointmentStatus, first: Int, after: String): AppointmentConnection
+  openAppointmentSlots(practiceId: String!, departmentId: String!, appointmentTypeId: String!, startDate: Date!, endDate: Date, providerId: String): [OpenAppointmentSlot!]
+  appointmentTypes(practiceId: String!, departmentId: String): [AppointmentType!]
+
+  # Encounters
+  encounter(practiceId: String!, encounterId: String!): Encounter
+  encounters(practiceId: String!, patientId: String, providerId: String, startDate: Date, endDate: Date, first: Int, after: String): EncounterConnection
+
+  # Clinical
+  problems(practiceId: String!, patientId: String!): [Problem!]
+  allergies(practiceId: String!, patientId: String!): [Allergy!]
+  vitals(practiceId: String!, patientId: String!, encounterId: String): [VitalSet!]
+  immunizations(practiceId: String!, patientId: String!): [Immunization!]
+
+  # Labs
+  labOrder(practiceId: String!, labOrderId: String!): LabOrder
+  labOrders(practiceId: String!, patientId: String!, startDate: Date, endDate: Date): [LabOrder!]
+  labResult(practiceId: String!, resultId: String!): LabResult
+
+  # Medications
+  prescriptions(practiceId: String!, patientId: String!, active: Boolean): [Prescription!]
+  medicationOrders(practiceId: String!, patientId: String!, encounterId: String): [MedicationOrder!]
+
+  # Documents
+  document(practiceId: String!, documentId: String!): Document
+  documents(practiceId: String!, patientId: String!, documentTypeId: String, status: DocumentStatus): [Document!]
+
+  # Charts
+  chart(practiceId: String!, patientId: String!): Chart
+  healthSummary(practiceId: String!, patientId: String!): HealthSummary
+  clinicalSummary(practiceId: String!, encounterId: String!): ClinicalSummary
+  ccda(practiceId: String!, patientId: String!, encounterId: String): CCDA
+
+  # Insurance & Billing
+  patientInsurance(practiceId: String!, patientId: String!): [PatientInsurance!]
+  insurancePayers(practiceId: String!, search: String): [InsurancePayer!]
+  claim(practiceId: String!, claimId: String!): Claim
+  claims(practiceId: String!, patientId: String, startDate: Date, endDate: Date, status: ClaimStatus, first: Int, after: String): ClaimConnection
+  payments(practiceId: String!, patientId: String, claimId: String, startDate: Date, endDate: Date): [Payment!]
+
+  # Messaging & Portal
+  patientMessages(practiceId: String!, patientId: String!, status: MessageStatus): [PatientMessage!]
+  portalAccount(practiceId: String!, patientId: String!): Portal
+
+  # Scheduling
+  schedule(practiceId: String!, scheduleId: String!): Schedule
+  schedules(practiceId: String!, providerId: String, departmentId: String): [Schedule!]
+  availability(practiceId: String!, providerId: String!, departmentId: String!, date: Date!): Availability
+
+  # Auth
+  apiKeys(practiceId: String): [APIKey!]
+  webhooks(practiceId: String!): [Webhook!]
+
+  # FHIR
+  fhirResource(practiceId: String!, resourceType: FHIRResourceType!, resourceId: String!): FHIR
+}
+
+type Mutation {
+  # Patients
+  createPatient(practiceId: String!, input: CreatePatientInput!): Patient
+  updatePatient(practiceId: String!, patientId: String!, input: UpdatePatientInput!): Patient
+
+  # Appointments
+  bookAppointment(practiceId: String!, input: BookAppointmentInput!): Appointment
+  cancelAppointment(practiceId: String!, appointmentId: String!, reason: String): Appointment
+  rescheduleAppointment(practiceId: String!, appointmentId: String!, newDateTime: DateTime!): Appointment
+  checkInAppointment(practiceId: String!, appointmentId: String!): Appointment
+  checkOutAppointment(practiceId: String!, appointmentId: String!): Appointment
+
+  # Encounters
+  createEncounter(practiceId: String!, input: CreateEncounterInput!): Encounter
+  closeEncounter(practiceId: String!, encounterId: String!): Encounter
+
+  # Clinical
+  addProblem(practiceId: String!, patientId: String!, input: AddProblemInput!): Problem
+  updateProblem(practiceId: String!, problemId: String!, input: UpdateProblemInput!): Problem
+  addAllergy(practiceId: String!, patientId: String!, input: AddAllergyInput!): Allergy
+  updateAllergy(practiceId: String!, allergyId: String!, input: UpdateAllergyInput!): Allergy
+  recordVitals(practiceId: String!, patientId: String!, encounterId: String!, input: RecordVitalsInput!): VitalSet
+  addImmunization(practiceId: String!, patientId: String!, input: AddImmunizationInput!): Immunization
+
+  # Labs
+  createLabOrder(practiceId: String!, input: CreateLabOrderInput!): LabOrder
+
+  # Medications
+  createPrescription(practiceId: String!, input: CreatePrescriptionInput!): Prescription
+  cancelPrescription(practiceId: String!, prescriptionId: String!, reason: String): Prescription
+
+  # Documents
+  uploadDocument(practiceId: String!, patientId: String!, input: UploadDocumentInput!): Document
+
+  # Insurance
+  addPatientInsurance(practiceId: String!, patientId: String!, input: AddInsuranceInput!): PatientInsurance
+  updatePatientInsurance(practiceId: String!, insuranceId: String!, input: UpdateInsuranceInput!): PatientInsurance
+
+  # Messaging
+  sendPatientMessage(practiceId: String!, input: SendMessageInput!): PatientMessage
+
+  # Webhooks
+  createWebhook(practiceId: String!, input: CreateWebhookInput!): Webhook
+  updateWebhook(practiceId: String!, webhookId: String!, input: UpdateWebhookInput!): Webhook
+  deleteWebhook(practiceId: String!, webhookId: String!): Boolean
+}
+
+# ---------------------------------------------------------------------------
+# Input Types
+# ---------------------------------------------------------------------------
+
+input AddressInput {
+  line1: String
+  line2: String
+  city: String
+  state: String
+  zip: String
+  country: String
+}
+
+input CreatePatientInput {
+  firstName: String!
+  lastName: String!
+  middleName: String
+  dateOfBirth: Date!
+  gender: Gender!
+  email: String
+  phone: String
+  mobilePhone: String
+  address: AddressInput
+  ssn: String
+  preferredLanguage: String
+  race: String
+  ethnicity: String
+}
+
+input UpdatePatientInput {
+  firstName: String
+  lastName: String
+  middleName: String
+  email: String
+  phone: String
+  mobilePhone: String
+  address: AddressInput
+  preferredLanguage: String
+}
+
+input BookAppointmentInput {
+  patientId: String!
+  providerId: String!
+  departmentId: String!
+  appointmentTypeId: String!
+  scheduledDateTime: DateTime!
+  reasonForVisit: String
+  chiefComplaint: String
+  patientNote: String
+}
+
+input CreateEncounterInput {
+  patientId: String!
+  providerId: String!
+  departmentId: String!
+  appointmentId: String
+  encounterDate: Date!
+  encounterType: String
+  chiefComplaint: String
+}
+
+input AddProblemInput {
+  icdCode: String
+  snomedCode: String
+  description: String!
+  status: String
+  onsetDate: Date
+}
+
+input UpdateProblemInput {
+  status: String
+  resolvedDate: Date
+  note: String
+}
+
+input AddAllergyInput {
+  allergenName: String!
+  allergenType: String
+  reactions: [String!]
+  severity: String
+  onsetDate: Date
+  note: String
+}
+
+input UpdateAllergyInput {
+  reactions: [String!]
+  severity: String
+  deactivatedDate: Date
+  note: String
+}
+
+input RecordVitalsInput {
+  recordedDateTime: DateTime!
+  vitals: [VitalDetailInput!]!
+}
+
+input VitalDetailInput {
+  vitalType: String!
+  value: String!
+  unit: String
+}
+
+input AddImmunizationInput {
+  vaccineName: String!
+  cvxCode: String
+  administeredDate: Date!
+  lotNumber: String
+  manufacturer: String
+  site: String
+  route: String
+  dose: String
+}
+
+input CreateLabOrderInput {
+  patientId: String!
+  encounterId: String!
+  providerId: String!
+  loincCode: String
+  description: String!
+  priority: String
+  diagnoses: [String!]
+}
+
+input CreatePrescriptionInput {
+  patientId: String!
+  encounterId: String
+  providerId: String!
+  medicationName: String!
+  rxnormCode: String
+  sig: String!
+  quantity: String!
+  refills: Int
+  daysSupply: Int
+  pharmacyId: String
+  diagnosis: [String!]
+  dispenseAsWritten: Boolean
+}
+
+input UploadDocumentInput {
+  documentTypeId: String!
+  description: String
+  encounterId: String
+  providerId: String
+  departmentId: String
+  content: String!
+  mimeType: String!
+  fileName: String
+}
+
+input AddInsuranceInput {
+  payerId: String!
+  planId: String
+  sequenceNumber: Int
+  memberId: String!
+  groupNumber: String
+  policyHolderName: String
+  policyHolderRelationship: String
+  policyHolderDateOfBirth: Date
+  effectiveDate: Date
+  expirationDate: Date
+}
+
+input UpdateInsuranceInput {
+  memberId: String
+  groupNumber: String
+  effectiveDate: Date
+  expirationDate: Date
+  copay: Float
+}
+
+input SendMessageInput {
+  patientId: String!
+  subject: String!
+  body: String!
+  providerId: String
+  departmentId: String
+  priority: String
+}
+
+input CreateWebhookInput {
+  name: String
+  targetUrl: String!
+  events: [String!]!
+  secret: String
+  headers: JSON
+}
+
+input UpdateWebhookInput {
+  name: String
+  targetUrl: String
+  events: [String!]
+  status: WebhookStatus
+  headers: JSON
+}
