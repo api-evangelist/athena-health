@@ -1,0 +1,205 @@
+{
+  "item": [
+    {
+      "id": "481ec68d-2c25-46ec-87e6-218a33b39b81",
+      "name": "CDS Hooks",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "e3698fb9-4528-4eeb-bb00-3458457cea3f",
+          "name": "Discover CDS Services",
+          "request": {
+            "name": "Discover CDS Services",
+            "description": {},
+            "url": {
+              "path": [
+                "cds-services"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7952d664-4037-43f4-8a1d-093f48810722",
+              "name": "Discovery response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cds-services"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"services\": [\n    {\n      \"id\": \"string\",\n      \"hook\": \"appointment-book\",\n      \"title\": \"string\",\n      \"description\": \"string\",\n      \"prefetch\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\",\n        \"key_2\": \"string\",\n        \"key_3\": \"string\"\n      }\n    },\n    {\n      \"id\": \"string\",\n      \"hook\": \"order-select\",\n      \"title\": \"string\",\n      \"description\": \"string\",\n      \"prefetch\": {\n        \"key_0\": \"string\"\n      }\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b721a9f3-8681-43f0-8c85-1f0d903e40cf",
+          "name": "Invoke CDS Service",
+          "request": {
+            "name": "Invoke CDS Service",
+            "description": {},
+            "url": {
+              "path": [
+                "cds-services",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hook\": \"<string>\",\n  \"hookInstance\": \"<string>\",\n  \"fhirServer\": \"<uri>\",\n  \"context\": \"<object>\",\n  \"prefetch\": \"<object>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "860af755-65b6-49ed-8281-1048d295fc55",
+              "name": "CDS Hooks response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cds-services",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hook\": \"<string>\",\n  \"hookInstance\": \"<string>\",\n  \"fhirServer\": \"<uri>\",\n  \"context\": \"<object>\",\n  \"prefetch\": \"<object>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"cards\": [\n    {\n      \"summary\": \"string\",\n      \"indicator\": \"critical\",\n      \"detail\": \"string\",\n      \"source\": {\n        \"label\": \"string\",\n        \"url\": \"http://KInyjsYrcKjprkL.xvix.krklKXsTMPvTjZxjCs2tBuOIuH1n+oItRxpfeQI87nyruSArQzLzTj2WARSr+VyeBJ\"\n      },\n      \"links\": [\n        {\n          \"label\": \"string\",\n          \"url\": \"http://QQDGqZYErKhJGqHt.cqfylnE1U1cVBh3XkpJ6ACDg1hAJID-XrjKxr7i8vTwg5,wKzHzT\",\n          \"type\": \"absolute\"\n        },\n        {\n          \"label\": \"string\",\n          \"url\": \"http://qbZBNuculeUXaegZHPZpcfRmXf.jfuoahP.BgBulKVYUakXyiaTxPretKGW9EtRgi4iX\",\n          \"type\": \"absolute\"\n        }\n      ]\n    },\n    {\n      \"summary\": \"string\",\n      \"indicator\": \"info\",\n      \"detail\": \"string\",\n      \"source\": {\n        \"label\": \"string\",\n        \"url\": \"https://SQSesROMfftGBvHMKPllpYB.qprziPKCdE4t6,g\"\n      },\n      \"links\": [\n        {\n          \"label\": \"string\",\n          \"url\": \"http://ZcJEJRoVX.xdD0bCyNyjuOBwtTiTmZKDe9rsvzE5vHDXQao-LM,\",\n          \"type\": \"smart\"\n        },\n        {\n          \"label\": \"string\",\n          \"url\": \"http://pqW.imioiYQNqI2JOpCj7X.1yscIXSnaUHhtQ9ScZRczWz7BJHalhaaEDI,7g-2\",\n          \"type\": \"smart\"\n        }\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://cds.example.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "904d437b-a781-4a77-95f6-a73fc494068a",
+    "name": "athenahealth CDS Hooks API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "CDS Hooks integration for athenaOne — invoke remote clinical decision\nsupport services at well-defined points in the EHR workflow.\n",
+      "type": "text/plain"
+    }
+  }
+}

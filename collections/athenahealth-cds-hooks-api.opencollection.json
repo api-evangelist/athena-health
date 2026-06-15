@@ -1,0 +1,51 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "athenahealth CDS Hooks API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "CDS Hooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Discover CDS Services",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cds.example.com/cds-services"
+          },
+          "docs": "Discover CDS Services"
+        },
+        {
+          "info": {
+            "name": "Invoke CDS Service",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cds.example.com/cds-services/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Invoke CDS Service"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
