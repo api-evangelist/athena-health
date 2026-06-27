@@ -227,7 +227,7 @@ common:
   type: Tools
 - url: https://github.com/eleanorhealth/go-athenahealth
   name: Go athenahealth SDK (community)
-  type: SDK
+  type: SDKs
 description: athenahealth is a cloud-based electronic health record (EHR), revenue
   cycle management, and practice management platform serving ambulatory practices,
   hospitals, and health systems across the United States. The athenaOne platform spans
